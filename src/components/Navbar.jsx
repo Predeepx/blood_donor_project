@@ -4,8 +4,8 @@ export default function Navbar() {
       <h2 style={styles.h2}>🩸QuickDonor</h2>
 
       <div style={styles.links}>
-        <button style={StyleSheet.btn}>Profile</button>
-        <button style={StyleSheet.btn}>About</button>
+        <button style={styles.btn}>Profile</button>
+        <button style={styles.btn}>About</button>
       </div>
     </div>
   );
@@ -21,6 +21,11 @@ const styles = {
     justifyContent: "space-between",
     padding: "0 85px",
     boxShadow: "0 1px 4px rgba(0,0,0,0.15)",
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "90%",
+    zIndex: 1000,
   },
   logo: {
     margin: 0,
@@ -30,13 +35,14 @@ const styles = {
     gap: "15px",
   },
   btn: {
-    background: "white",
-    color: "#c62828",
-    border: "none",
-    padding: "8px 15px",
-    borderRadius: "5px",
+    // background: "transparent",
+    // color: "white",
+    border: "1px solid rgba(255,255,255,0.6)",
+    padding: "8px 18px",
+    borderRadius: "8px",
     cursor: "pointer",
-    fontWeight: "bold",
+    fontWeight: "600",
+    transition: "0.3s",
   },
   h2: {
     fontSize: "24px",

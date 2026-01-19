@@ -5,24 +5,43 @@ import {
   createUserWithEmailAndPassword,
   signInWithPopup,
 } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const login = async () => {
+    if (!email || !password) {
+      alert("Please enter email and password");
+      return;
+    }
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      alert("Logged in!");
-    } catch {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert("Account created & logged in");
+      navigate("/Home");
+    } catch (error) {
+      if (error.code === "Mail or Passward incorrect") {
+        try {
+          await createUserWithEmailAndPassword(auth, email, password);
+          navigate("/Home");
+        } catch (err) {
+          alert(err.message);
+        }
+      } else {
+        alert(error.message);
+      }
     }
   };
 
   const googleLogin = async () => {
-    await signInWithPopup(auth, googleProvider);
-    alert("Google login success");
+    try {
+      await signInWithPopup(auth, googleProvider);
+      navigate("/Home");
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
@@ -31,6 +50,7 @@ export default function Login() {
         <h1>🩸 QuickDonor</h1>
 
         <input
+          type="email"
           placeholder="Email"
           onChange={(e) => setEmail(e.target.value)}
           style={styles.input}
