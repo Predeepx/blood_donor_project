@@ -15,7 +15,6 @@ const styles = {
   nav: {
     height: "56px",
     background: "white",
-    color: "white",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
@@ -24,9 +23,11 @@ const styles = {
     position: "fixed",
     top: 0,
     left: 0,
-    width: "90%",
+    width: "100%",
+    boxSizing: "border-box",
     zIndex: 1000,
   },
+
   logo: {
     margin: 0,
   },

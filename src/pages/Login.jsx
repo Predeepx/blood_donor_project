@@ -10,37 +10,67 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const login = async () => {
+  // 🔐 LOGIN
+  const handleLogin = async () => {
     if (!email || !password) {
       alert("Please enter email and password");
       return;
     }
 
+    setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/Home");
+      navigate("/home");
     } catch (error) {
-      if (error.code === "Mail or Passward incorrect") {
-        try {
-          await createUserWithEmailAndPassword(auth, email, password);
-          navigate("/Home");
-        } catch (err) {
-          alert(err.message);
-        }
+      if (error.code === "auth/user-not-found") {
+        alert("No account found. Please sign up first.");
+      } else if (error.code === "auth/wrong-password") {
+        alert("Incorrect password.");
       } else {
-        alert(error.message);
+        alert("Login failed. Please try again.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
+  // 🆕 SIGN UP
+  const handleSignup = async () => {
+    if (!email || !password) {
+      alert("Please enter email and password");
+      return;
+    }
+
+    if (password.length < 6) {
+      alert("Password must be at least 6 characters");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      navigate("/home");
+    } catch (error) {
+      if (error.code === "auth/email-already-in-use") {
+        alert("Account already exists. Please log in.");
+      } else {
+        alert("Signup failed. Please try again.");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔵 GOOGLE LOGIN
   const googleLogin = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-      navigate("/Home");
-    } catch (error) {
-      alert(error.message);
+      navigate("/home");
+    } catch {
+      alert("Google login failed. Try again.");
     }
   };
 
@@ -48,10 +78,12 @@ export default function Login() {
     <div style={styles.page}>
       <div style={styles.card}>
         <h1>🩸 QuickDonor</h1>
+        <p style={{ color: "#666" }}>Login or create an account</p>
 
         <input
           type="email"
           placeholder="Email"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
           style={styles.input}
         />
@@ -59,15 +91,24 @@ export default function Login() {
         <input
           type="password"
           placeholder="Password"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
           style={styles.input}
         />
 
-        <button onClick={login} style={styles.btn}>
-          Get Started
+        <button onClick={handleLogin} style={styles.btn} disabled={loading}>
+          {loading ? "Please wait..." : "Login"}
         </button>
 
-        <p>or</p>
+        <button
+          onClick={handleSignup}
+          style={{ ...styles.btn, background: "#c62828", marginTop: "10px" }}
+          disabled={loading}
+        >
+          Sign Up
+        </button>
+
+        <p style={{ margin: "15px 0" }}>or</p>
 
         <button onClick={googleLogin} style={styles.google}>
           Sign in with Google
@@ -99,6 +140,7 @@ const styles = {
     marginBottom: "15px",
     borderRadius: "8px",
     border: "1px solid #ddd",
+    outline: "none",
   },
   btn: {
     width: "100%",
