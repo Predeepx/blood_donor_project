@@ -81,6 +81,13 @@ export default function Login() {
         <p style={{ color: "#666" }}>Login or create an account</p>
 
         <input
+          type="name"
+          placeholder="Name"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          style={styles.input}
+        />
+        <input
           type="email"
           placeholder="Email"
           value={email}
@@ -105,7 +112,7 @@ export default function Login() {
           style={{ ...styles.btn, background: "#c62828", marginTop: "10px" }}
           disabled={loading}
         >
-          Sign Up
+          create a new account
         </button>
 
         <p style={{ margin: "15px 0" }}>or</p>

@@ -68,7 +68,7 @@ export default function FindBlood() {
 
 const styles = {
   container: {
-    paddingTop: "100px",
+    paddingTop: "200px",
     minHeight: "100vh",
     background: "#f9f9f9",
     textAlign: "center",

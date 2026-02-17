@@ -1,5 +1,8 @@
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import { useState } from "react";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import "./Donor.css";
 
 export default function Donor() {
   const [form, setForm] = useState({
@@ -8,6 +11,10 @@ export default function Donor() {
     phone: "",
     city: "",
   });
+
+  useEffect(() => {
+    AOS.init({ duration: 1000 });
+  }, []);
 
   const handleChange = (e) => {
     setForm({
@@ -24,105 +31,75 @@ export default function Donor() {
       return;
     }
 
-    console.log("Donor Data:", form);
-    alert("Donor Registered Successfully 🩸");
-
-    // later → save to Firebase
+    alert("Thank you for becoming a lifesaver 🩸");
   };
 
   return (
     <>
       <Navbar />
-      <div style={styles.container}>
-        <h1 style={styles.title}>🩸 Become a Blood Donor</h1>
-        <p style={styles.subtitle}>
-          Your single donation can save multiple lives.
-        </p>
 
-        <form style={styles.card} onSubmit={handleSubmit}>
-          <input
-            name="name"
-            placeholder="Full Name"
-            onChange={handleChange}
-            style={styles.input}
-          />
+      {/* FORM SECTION */}
+      <section className="donor-section">
+        <div className="donor-card" data-aos="fade-up">
+          <h2>Register as Donor</h2>
 
-          <select
-            name="bloodGroup"
-            onChange={handleChange}
-            style={styles.input}
-          >
-            <option value="">Select Blood Group</option>
-            <option>A+</option>
-            <option>A-</option>
-            <option>B+</option>
-            <option>B-</option>
-            <option>O+</option>
-            <option>O-</option>
-            <option>AB+</option>
-            <option>AB-</option>
-          </select>
+          <form onSubmit={handleSubmit}>
+            <input
+              name="name"
+              placeholder="Full Name"
+              onChange={handleChange}
+            />
 
-          <input
-            name="phone"
-            placeholder="Phone Number"
-            onChange={handleChange}
-            style={styles.input}
-          />
+            <select name="bloodGroup" onChange={handleChange}>
+              <option value="">Select Blood Group</option>
+              <option>A+</option>
+              <option>A-</option>
+              <option>B+</option>
+              <option>B-</option>
+              <option>O+</option>
+              <option>O-</option>
+              <option>AB+</option>
+              <option>AB-</option>
+            </select>
 
-          <input
-            name="city"
-            placeholder="City / Location"
-            onChange={handleChange}
-            style={styles.input}
-          />
+            <input
+              name="phone"
+              placeholder="Phone Number"
+              onChange={handleChange}
+            />
 
-          <button style={styles.btn}>Register as Donor</button>
-        </form>
-      </div>
+            <input
+              name="city"
+              placeholder="City / Location"
+              onChange={handleChange}
+            />
+
+            <button type="submit">Register Now</button>
+          </form>
+        </div>
+      </section>
+
+      {/* TRUST SECTION */}
+      <section className="trust">
+        <h2 data-aos="fade-up">Why Donate With QuickDonor?</h2>
+
+        <div className="trust-grid">
+          <div className="trust-item" data-aos="fade-up">
+            <h3>✔ Verified Requests</h3>
+            <p>We ensure genuine blood requests only.</p>
+          </div>
+
+          <div className="trust-item" data-aos="fade-up" data-aos-delay="200">
+            <h3>✔ Instant SMS Alerts</h3>
+            <p>Get notified when someone nearby needs help.</p>
+          </div>
+
+          <div className="trust-item" data-aos="fade-up" data-aos-delay="400">
+            <h3>✔ Data Privacy</h3>
+            <p>Your personal information is securely stored.</p>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
-
-const styles = {
-  container: {
-    paddingTop: "100px",
-    minHeight: "100vh",
-    background: "#f9f9f9",
-    textAlign: "center",
-  },
-  title: {
-    color: "#c62828",
-    marginBottom: "10px",
-  },
-  subtitle: {
-    color: "#555",
-    marginBottom: "30px",
-  },
-  card: {
-    width: "360px",
-    margin: "auto",
-    background: "white",
-    padding: "30px",
-    borderRadius: "16px",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
-    display: "flex",
-    flexDirection: "column",
-    gap: "15px",
-  },
-  input: {
-    padding: "12px",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-    fontSize: "14px",
-  },
-  btn: {
-    padding: "12px",
-    background: "#c62828",
-    color: "white",
-    border: "none",
-    borderRadius: "10px",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
-};
