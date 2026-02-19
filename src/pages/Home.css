@@ -121,6 +121,7 @@
 }
 
 .pulse-heart {
+  padding-left: 10px;
   display: inline-block;
   animation: heartbeat 1.3s infinite;
 }

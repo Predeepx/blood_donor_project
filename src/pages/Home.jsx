@@ -34,8 +34,8 @@ export default function Home() {
 
         <div className="hero-content">
           <h1 className="hero-title">
-            Saving Lives with QuickDonor
-            <span className="pulse-heart"> 🩸</span>
+            Saving Lives with QuickDonor 
+            <span className="pulse-heart"> 🩸 </span>
           </h1>
 
           <p className="hero-subtitle">
@@ -68,7 +68,6 @@ export default function Home() {
         </div>
       </section>
 
-      
       {/* STORY SECTION */}
       <section className="story">
         <div className="story-content">
