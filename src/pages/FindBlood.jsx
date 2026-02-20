@@ -1,45 +1,111 @@
+import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
-import { useState } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMapEvents,
+  useMap,
+} from "react-leaflet";
+import L from "leaflet";
+import "./FindBlood.css";
+
+/* Fix Leaflet icon */
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl:
+    "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+});
+
+/* Finder Blue Icon */
+const finderIcon = new L.Icon({
+  iconUrl: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+  iconSize: [35, 35],
+});
 
 export default function FindBlood() {
-  const [search, setSearch] = useState({
-    bloodGroup: "",
-    city: "",
-  });
+  const [bloodGroup, setBloodGroup] = useState("");
+  const [userPosition, setUserPosition] = useState(null);
+  const [donors, setDonors] = useState([]);
+  const [nearbyOnly, setNearbyOnly] = useState(false);
 
-  const handleChange = (e) => {
-    setSearch({
-      ...search,
-      [e.target.name]: e.target.value,
+  /* Auto detect finder location */
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        setUserPosition([pos.coords.latitude, pos.coords.longitude]);
+      });
+    }
+  }, []);
+
+  /* Auto search */
+  useEffect(() => {
+    if (bloodGroup) fetchDonors();
+  }, [bloodGroup, nearbyOnly, userPosition]);
+
+  const fetchDonors = async () => {
+    const res = await fetch("http://localhost:5001/api/donors/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        bloodGroup,
+        latitude: userPosition?.[0],
+        longitude: userPosition?.[1],
+        nearbyOnly,
+      }),
     });
+
+    const data = await res.json();
+    setDonors(data);
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
+  function AutoZoom() {
+    const map = useMap();
+    if (userPosition) map.setView(userPosition, 13);
+    return null;
+  }
 
-    if (!search.bloodGroup || !search.city) {
-      alert("Please select blood group and city");
-      return;
-    }
+  function LocationMarker() {
+    useMapEvents({
+      click(e) {
+        setUserPosition([e.latlng.lat, e.latlng.lng]);
+      },
+    });
 
-    console.log("Searching for:", search);
+    return userPosition ? (
+      <Marker position={userPosition} icon={finderIcon}>
+        <Popup>Your Location 📍</Popup>
+      </Marker>
+    ) : null;
+  }
 
-    // Later → Fetch from Firestore
-    alert("Search functionality will connect to database soon 🔎");
+  const formatPhone = (phone) => {
+    if (phone.startsWith("+")) return phone;
+    return `+91${phone}`;
+  };
+
+  const createWhatsAppLink = (donor) => {
+    const phone = formatPhone(donor.phone).replace("+", "");
+    const message = encodeURIComponent(
+      `🚨 Emergency Blood Request\n\nBlood Group Required: ${donor.bloodGroup}\nLocation: https://www.google.com/maps?q=${userPosition?.[0]},${userPosition?.[1]}\n\nPlease respond if available.\n\nQuickDonor`,
+    );
+    return `https://wa.me/${phone}?text=${message}`;
   };
 
   return (
     <>
       <Navbar />
-      <div style={styles.container}>
-        <h1 style={styles.title}>🏥 Find Blood Donors</h1>
-        <p style={styles.subtitle}>Search for available donors near you.</p>
 
-        <form style={styles.card} onSubmit={handleSearch}>
+      <div className="finder-container">
+        <div className="finder-panel">
+          <h2>Find Blood Donors</h2>
+
           <select
-            name="bloodGroup"
-            onChange={handleChange}
-            style={styles.input}
+            value={bloodGroup}
+            onChange={(e) => setBloodGroup(e.target.value)}
           >
             <option value="">Select Blood Group</option>
             <option>A+</option>
@@ -52,59 +118,59 @@ export default function FindBlood() {
             <option>AB-</option>
           </select>
 
-          <input
-            name="city"
-            placeholder="Enter City"
-            onChange={handleChange}
-            style={styles.input}
-          />
+          <label className="checkbox">
+            <input
+              type="checkbox"
+              checked={nearbyOnly}
+              onChange={() => setNearbyOnly(!nearbyOnly)}
+            />
+            Show Nearby Only (10km)
+          </label>
+        </div>
 
-          <button style={styles.btn}>Search Donors</button>
-        </form>
+        <MapContainer center={[20.5937, 78.9629]} zoom={5} className="map">
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+          <LocationMarker />
+          <AutoZoom />
+
+          {donors.map((donor) => (
+            <Marker
+              key={donor._id}
+              position={[
+                donor.location.coordinates[1],
+                donor.location.coordinates[0],
+              ]}
+            >
+              <Popup>
+                <div className="popup-card">
+                  <h4>{donor.name}</h4>
+
+                  <p className="blood">🩸 {donor.bloodGroup}</p>
+
+                  <p className="phone">📞 {donor.phone}</p>
+
+                  <a
+                    href={`tel:${formatPhone(donor.phone)}`}
+                    className="call-btn full-btn"
+                  >
+                    📞 Call Now
+                  </a>
+
+                  <a
+                    href={createWhatsAppLink(donor)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="wa-btn full-btn"
+                  >
+                    💬 WhatsApp Message
+                  </a>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
       </div>
     </>
   );
 }
-
-const styles = {
-  container: {
-    paddingTop: "200px",
-    minHeight: "100vh",
-    background: "#f9f9f9",
-    textAlign: "center",
-  },
-  title: {
-    color: "#c62828",
-    marginBottom: "10px",
-  },
-  subtitle: {
-    color: "#555",
-    marginBottom: "30px",
-  },
-  card: {
-    width: "360px",
-    margin: "auto",
-    background: "white",
-    padding: "30px",
-    borderRadius: "16px",
-    boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
-    display: "flex",
-    flexDirection: "column",
-    gap: "15px",
-  },
-  input: {
-    padding: "12px",
-    borderRadius: "8px",
-    border: "1px solid #ddd",
-    fontSize: "14px",
-  },
-  btn: {
-    padding: "12px",
-    background: "#c62828",
-    color: "white",
-    border: "none",
-    borderRadius: "10px",
-    fontWeight: "600",
-    cursor: "pointer",
-  },
-};

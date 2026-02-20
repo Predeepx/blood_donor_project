@@ -53,6 +53,7 @@ export default function Navbar() {
         <button style={styles.outlineBtn} onClick={() => navigate("/login")}>
           Login
         </button>
+        
       </div>
     </nav>
   );

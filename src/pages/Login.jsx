@@ -1,76 +1,53 @@
 import { useState } from "react";
-import { auth, googleProvider } from "../services/firebase";
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signInWithPopup,
-} from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const [isSignup, setIsSignup] = useState(false);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  // 🔐 LOGIN
-  const handleLogin = async () => {
-    if (!email || !password) {
-      alert("Please enter email and password");
+  const handleSubmit = async () => {
+    if (!email || !password || (isSignup && !name)) {
+      alert("Please fill all fields");
       return;
     }
 
-    setLoading(true);
+    const endpoint = isSignup
+      ? "http://localhost:5001/api/auth/register"
+      : "http://localhost:5001/api/auth/login";
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate("/home");
-    } catch (error) {
-      if (error.code === "auth/user-not-found") {
-        alert("No account found. Please sign up first.");
-      } else if (error.code === "auth/wrong-password") {
-        alert("Incorrect password.");
-      } else {
-        alert("Login failed. Please try again.");
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+        }),
+      });
+
+      const data = await res.json();
+
+      // 🔥 Show backend error message
+      if (!res.ok) {
+        console.log("Status Code:", res.status);
+        console.log("Backend Message:", data);
+
+        alert(`Error ${res.status}: ${data.message || JSON.stringify(data)}`);
+        return;
       }
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  // 🆕 SIGN UP
-  const handleSignup = async () => {
-    if (!email || !password) {
-      alert("Please enter email and password");
-      return;
-    }
-
-    if (password.length < 6) {
-      alert("Password must be at least 6 characters");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      // Success
+      localStorage.setItem("token", data.token);
+      alert("Authentication successful 🎉");
       navigate("/home");
-    } catch (error) {
-      if (error.code === "auth/email-already-in-use") {
-        alert("Account already exists. Please log in.");
-      } else {
-        alert("Signup failed. Please try again.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 🔵 GOOGLE LOGIN
-  const googleLogin = async () => {
-    try {
-      await signInWithPopup(auth, googleProvider);
-      navigate("/home");
-    } catch {
-      alert("Google login failed. Try again.");
+    } catch (err) {
+      console.error("Network / Server Error:", err);
+      alert("Network error: " + err.message);
     }
   };
 
@@ -78,15 +55,18 @@ export default function Login() {
     <div style={styles.page}>
       <div style={styles.card}>
         <h1>🩸 QuickDonor</h1>
-        <p style={{ color: "#666" }}>Login or create an account</p>
+        <p>{isSignup ? "Create Account" : "Login to your account"}</p>
 
-        <input
-          type="name"
-          placeholder="Name"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={styles.input}
-        />
+        {isSignup && (
+          <input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            style={styles.input}
+          />
+        )}
+
         <input
           type="email"
           placeholder="Email"
@@ -103,23 +83,18 @@ export default function Login() {
           style={styles.input}
         />
 
-        <button onClick={handleLogin} style={styles.btn} disabled={loading}>
-          {loading ? "Please wait..." : "Login"}
+        <button onClick={handleSubmit} style={styles.btn}>
+          {isSignup ? "Sign Up" : "Login"}
         </button>
 
-        <button
-          onClick={handleSignup}
-          style={{ ...styles.btn, background: "#c62828", marginTop: "10px" }}
-          disabled={loading}
+        <p
+          style={{ marginTop: "15px", cursor: "pointer", color: "#c62828" }}
+          onClick={() => setIsSignup(!isSignup)}
         >
-          create a new account
-        </button>
-
-        <p style={{ margin: "15px 0" }}>or</p>
-
-        <button onClick={googleLogin} style={styles.google}>
-          Sign in with Google
-        </button>
+          {isSignup
+            ? "Already have an account? Login"
+            : "Don't have an account? Sign Up"}
+        </p>
       </div>
     </div>
   );
@@ -147,7 +122,6 @@ const styles = {
     marginBottom: "15px",
     borderRadius: "8px",
     border: "1px solid #ddd",
-    outline: "none",
   },
   btn: {
     width: "100%",
@@ -157,13 +131,5 @@ const styles = {
     border: "none",
     borderRadius: "10px",
     cursor: "pointer",
-  },
-  google: {
-    width: "100%",
-    padding: "12px",
-    borderRadius: "10px",
-    border: "1px solid #ccc",
-    cursor: "pointer",
-    background: "white",
   },
 };

@@ -1,0 +1,165 @@
+.finder-container {
+  height: calc(100vh - 70px);
+  margin-top: 70px;
+  position: relative;
+}
+
+.finder-panel {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 260px;
+}
+
+.finder-panel h2 {
+  margin-bottom: 15px;
+  color: #c62828;
+}
+
+.finder-panel select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.checkbox {
+  font-size: 14px;
+}
+
+.map {
+  height: 100%;
+  width: 100%;
+}
+
+.popup-card {
+  text-align: center;
+}
+
+.popup-card button {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background: #c62828;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  width: 350px;
+}
+
+.modal input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+
+.cancel {
+  background: #aaa;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.send {
+  background: #c62828;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.popup-card {
+  text-align: center;
+}
+
+.popup-card h4 {
+  margin-bottom: 2px;
+}
+
+.popup-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.call-btn,
+.whatsapp-btn {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+}
+
+.call-btn {
+  background-color: #1976d2;
+}
+
+.whatsapp-btn {
+  background-color: #25d366;
+}
+.popup-card {
+  min-width: 10px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.full-btn {
+  width: 95%;
+  display: block;
+  padding: 8px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.call-btn {
+  background: #111;
+  color: white;
+}
+
+.wa-btn {
+  background: #25d366;
+  color: white;
+}
