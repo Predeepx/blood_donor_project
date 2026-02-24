@@ -1,6 +1,5 @@
-// import dotenv from "dotenv";
-// dotenv.config(); // MUST BE FIRST LINE
-
+import dotenv from "dotenv";
+dotenv.config(); // MUST be first
 
 import express from "express";
 import cors from "cors";
@@ -8,36 +7,29 @@ import http from "http";
 import { Server } from "socket.io";
 import connectDB from "./config/db.js";
 
-// Routes
 import authRoutes from "./routes/authRoutes.js";
 import donorRoutes from "./routes/donorRoutes.js";
 import requestRoutes from "./routes/requestRoutes.js";
 
-// Connect to MongoDB
 connectDB();
 
 const app = express();
-
-/* ===============================
-   CREATE HTTP SERVER + SOCKET.IO
-================================= */
 const server = http.createServer(app);
 
+/* ===============================
+   SOCKET.IO
+================================= */
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5174",
+    origin: ["http://localhost:5173", "http://localhost:5174"],
     methods: ["GET", "POST"],
   },
 });
 
 app.set("io", io);
 
-/* ===============================
-   SOCKET CONNECTION
-================================= */
 io.on("connection", (socket) => {
   console.log("🟢 User connected:", socket.id);
-
   socket.on("disconnect", () => {
     console.log("🔴 User disconnected:", socket.id);
   });
@@ -48,9 +40,9 @@ io.on("connection", (socket) => {
 ================================= */
 app.use(
   cors({
-    origin: "http://localhost:5174",
+    origin: ["http://localhost:5173", "http://localhost:5174"],
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json());
@@ -73,11 +65,5 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5001;
 
 server.listen(PORT, () => {
-  console.log(`
-  =====================================
-   🚀 QuickDonor Server Running
-   🌍 Port: ${PORT}
-   📡 Mode: ${process.env.NODE_ENV || "development"}
-  =====================================
-  `);
+  console.log(`🚀 Server running on port ${PORT}`);
 });

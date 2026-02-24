@@ -8,32 +8,33 @@ export default function Navbar() {
 
   const path = location.pathname;
 
-  // Pages where navbar should always show
-  const alwaysVisiblePages = ["/donor", "/find-blood"];
-
-  // Pages where navbar should be hidden
-  const hiddenPages = ["/login", "/home"];
+  // Hide completely on login page
+  if (path === "/login") return null;
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 80);
+      setScrolled(window.scrollY > 800);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Hide completely on certain pages
-  if (hiddenPages.includes(path)) return null;
-
-  // On home page → show only after scroll
-  if (path === "/" && !scrolled) return null;
+  const isHomePage = path === "/home";
+  const showNavbar = !isHomePage || scrolled;
 
   return (
-    <nav style={styles.navbar}>
-      <div style={styles.logo} onClick={() => navigate("/")}>
+    <nav
+      style={{
+        ...styles.navbar,
+        opacity: showNavbar ? 1 : 0,
+        transform: showNavbar ? "translateY(0px)" : "translateY(-30px)",
+        pointerEvents: showNavbar ? "auto" : "none",
+      }}
+    >
+      <button style={styles.logo} onClick={() => navigate("/home")}>
         🩸 QuickDonor
-      </div>
+      </button>
 
       <div style={styles.links}>
         <button
@@ -49,11 +50,16 @@ export default function Navbar() {
         >
           Find Blood
         </button>
+        <button
+          style={path === "/profile" ? styles.activeBtn : styles.btn}
+          onClick={() => navigate("/profile")}
+        >
+          Profile
+        </button>
 
         <button style={styles.outlineBtn} onClick={() => navigate("/login")}>
           Login
         </button>
-        
       </div>
     </nav>
   );
@@ -76,10 +82,14 @@ const styles = {
     boxShadow: "0 8px 20px rgba(0,0,0,0.06)",
     zIndex: 9999,
     boxSizing: "border-box",
+    transition:
+      "opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)",
   },
 
   logo: {
-    fontSize: "22px",
+    background: "transparent",
+    border: "none",
+    fontSize: "29px",
     fontWeight: "700",
     color: "#c62828",
     cursor: "pointer",

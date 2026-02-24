@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Donor from "./pages/Donor";
 import FindBlood from "./pages/FindBlood";
+import Profile from "./pages/Profile";
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/donor" element={<Donor />} />
         <Route path="/find-blood" element={<FindBlood />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );
