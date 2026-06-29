@@ -17,6 +17,8 @@ L.Icon.Default.mergeOptions({
     "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
   iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
   shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
+
+  // https://app.unpkg.com/leaflet@1.7.1/files/dist/images file path for images
 });
 
 export default function Donor() {
@@ -28,30 +30,55 @@ export default function Donor() {
   });
 
   const [position, setPosition] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
-
   const [showEligibility, setShowEligibility] = useState(false);
   const [eligible, setEligible] = useState(false);
 
   /* Auto detect location */
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setPosition([pos.coords.latitude, pos.coords.longitude]);
-        },
-        () => {},
-      );
+      navigator.geolocation.getCurrentPosition((pos) => {
+        setPosition([pos.coords.latitude, pos.coords.longitude]);
+      });
     }
   }, []);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
+  /* Modern Search with hospital support */
+  const handleLocationSearch = async () => {
+    if (!searchQuery) return;
+
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}`,
+      );
+      const data = await res.json();
+
+      if (data.length > 0) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        setPosition([lat, lon]);
+
+        if (
+          data[0].type === "hospital" ||
+          data[0].display_name.toLowerCase().includes("hospital")
+        ) {
+          alert("🏥 Hospital location selected");
+        }
+      } else {
+        alert("Location not found");
+      }
+    } catch {
+      alert("Search failed");
+    }
+  };
+
   const handleSubmit = async () => {
     const token = localStorage.getItem("token");
     if (!token) return alert("Please login first");
-
     if (!position) return alert("Select your location");
 
     setLoading(true);
@@ -71,20 +98,13 @@ export default function Donor() {
       });
 
       const data = await res.json();
-
       if (!res.ok) return alert(data.message);
 
       alert("Donor registered successfully 🩸");
 
-      setForm({
-        name: "",
-        bloodGroup: "",
-        phone: "",
-        city: "",
-      });
-
+      setForm({ name: "", bloodGroup: "", phone: "", city: "" });
       setEligible(false);
-    } catch (err) {
+    } catch {
       alert("Server error");
     } finally {
       setLoading(false);
@@ -97,7 +117,6 @@ export default function Donor() {
         setPosition([e.latlng.lat, e.latlng.lng]);
       },
     });
-
     return position ? <Marker position={position} /> : null;
   }
 
@@ -120,14 +139,11 @@ export default function Donor() {
             placeholder="Full Name"
             value={form.name}
             onChange={handleChange}
-            required
           />
-
           <select
             name="bloodGroup"
             value={form.bloodGroup}
             onChange={handleChange}
-            required
           >
             <option value="">Select Blood Group</option>
             <option>A+</option>
@@ -145,9 +161,7 @@ export default function Donor() {
             placeholder="Phone Number"
             value={form.phone}
             onChange={handleChange}
-            required
           />
-
           <input
             name="city"
             placeholder="City"
@@ -155,13 +169,24 @@ export default function Donor() {
             onChange={handleChange}
           />
 
-          <button type="button" onClick={() => setShowEligibility(true)}>
-            Register
+          <button type="button" onClick={handleSubmit}>
+            {loading ? "Registering..." : "Register"}
           </button>
         </div>
 
         {/* MAP */}
         <div className="donor-map">
+          {/* Modern Search Bar */}
+          <div className="map-search">
+            <input
+              type="text"
+              placeholder="Search city, hospital, blood bank..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button onClick={handleLocationSearch}>Search</button>
+          </div>
+
           <MapContainer center={[20.5937, 78.9629]} zoom={5} className="map">
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
             <LocationMarker />
@@ -169,66 +194,6 @@ export default function Donor() {
           </MapContainer>
         </div>
       </div>
-
-      {/* ===== ELIGIBILITY MODAL ===== */}
-      {showEligibility && (
-        <div className="modal-overlay">
-          <div className="modal-card">
-            <div className="modal-header">Blood Donation Eligibility</div>
-
-            <div className="modal-body">
-              {[
-                "I am between 18 and 60 years old",
-                "My weight is at least 50kg",
-                "I have not donated blood in last 90 days",
-                "No tattoo or piercing in last 6 months",
-                "No major surgery in last 6 months",
-                "Not infected with HIV/Hepatitis",
-                "Not pregnant or breastfeeding",
-                "Not currently sick or fever",
-                "No alcohol in last 24 hours",
-                "Not taking antibiotics",
-              ].map((item, index) => (
-                <div key={index} className="checkbox-row">
-                  <input type="checkbox" />
-                  <span>{item}</span>
-                </div>
-              ))}
-
-              <div className="checkbox-row confirm">
-                <input
-                  type="checkbox"
-                  checked={eligible}
-                  onChange={(e) => setEligible(e.target.checked)}
-                />
-                <span>
-                  <strong>I confirm I meet ALL the above criteria</strong>
-                </span>
-              </div>
-            </div>
-
-            <div className="modal-footer">
-              <button
-                className="cancel-btn"
-                onClick={() => setShowEligibility(false)}
-              >
-                Cancel
-              </button>
-
-              <button
-                className="confirm-btn"
-                disabled={!eligible}
-                onClick={() => {
-                  setShowEligibility(false);
-                  handleSubmit();
-                }}
-              >
-                Confirm & Register
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
