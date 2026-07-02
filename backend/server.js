@@ -19,13 +19,18 @@ const server = http.createServer(app);
 /* ===============================
    SOCKET.IO
 ================================= */
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "https://your-app.vercel.app",
+];
+
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
   },
 });
-
 app.set("io", io);
 
 io.on("connection", (socket) => {
@@ -40,7 +45,7 @@ io.on("connection", (socket) => {
 ================================= */
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: allowedOrigins,
     credentials: true,
   }),
 );
