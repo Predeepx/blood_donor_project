@@ -10,7 +10,7 @@ import connectDB from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import donorRoutes from "./routes/donorRoutes.js";
 import requestRoutes from "./routes/requestRoutes.js";
-
+console.log(process.env.MONGO_URI);
 connectDB();
 
 const app = express();
