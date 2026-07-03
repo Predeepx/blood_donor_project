@@ -26,8 +26,17 @@ export default function Profile() {
       setUser(res.data);
       setForm(res.data);
     } catch (err) {
-      localStorage.removeItem("token");
-      navigate("/login");
+      console.error("Profile Error:", err);
+
+      if (err.response) {
+        console.log("Status:", err.response.status);
+        console.log("Data:", err.response.data);
+      }
+
+      alert("Profile request failed");
+      // Comment these out for now
+      // localStorage.removeItem("token");
+      // navigate("/login");
     } finally {
       setLoading(false);
     }
