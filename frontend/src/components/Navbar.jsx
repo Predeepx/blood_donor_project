@@ -64,6 +64,7 @@ export default function Navbar() {
     </nav>
   );
 }
+const isMobile = window.innerWidth <= 768;
 
 const styles = {
   navbar: {
@@ -71,65 +72,76 @@ const styles = {
     top: 0,
     left: 0,
     width: "100%",
-    height: "70px",
-    padding: "0 80px",
+    minHeight: isMobile ? "60px" : "70px",
+    padding: isMobile ? "10px 16px" : "0 80px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    flexWrap: isMobile ? "wrap" : "nowrap",
+
     backdropFilter: "blur(16px)",
     background: "rgba(255,255,255,0.75)",
     borderBottom: "1px solid rgba(0,0,0,0.05)",
     boxShadow: "0 8px 20px rgba(0,0,0,0.06)",
+
     zIndex: 9999,
     boxSizing: "border-box",
+
     transition:
-      "opacity 0.4s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)",
+      "opacity .4s ease, transform .4s cubic-bezier(.22,1,.36,1)",
   },
 
   logo: {
     background: "transparent",
     border: "none",
-    fontSize: "29px",
+    fontSize: isMobile ? "22px" : "29px",
     fontWeight: "700",
     color: "#c62828",
     cursor: "pointer",
-    letterSpacing: "0.5px",
+    letterSpacing: ".5px",
+    marginBottom: isMobile ? "8px" : "0",
   },
 
   links: {
     display: "flex",
-    gap: "18px",
+    gap: isMobile ? "8px" : "18px",
+    flexWrap: isMobile ? "wrap" : "nowrap",
+    justifyContent: isMobile ? "center" : "flex-end",
+    width: isMobile ? "100%" : "auto",
   },
 
   btn: {
     background: "transparent",
     border: "none",
-    padding: "8px 14px",
+    padding: isMobile ? "8px 10px" : "8px 14px",
     fontWeight: "600",
     cursor: "pointer",
     borderRadius: "8px",
-    transition: "0.3s",
+    transition: ".3s",
     color: "#333",
+    fontSize: isMobile ? "13px" : "15px",
   },
 
   activeBtn: {
     background: "#c62828",
-    color: "white",
+    color: "#fff",
     border: "none",
-    padding: "8px 16px",
+    padding: isMobile ? "8px 10px" : "8px 16px",
     borderRadius: "8px",
     fontWeight: "600",
     cursor: "pointer",
+    fontSize: isMobile ? "13px" : "15px",
   },
 
   outlineBtn: {
     background: "transparent",
     border: "1px solid #c62828",
     color: "#c62828",
-    padding: "8px 16px",
+    padding: isMobile ? "8px 10px" : "8px 16px",
     borderRadius: "8px",
     fontWeight: "600",
     cursor: "pointer",
-    transition: "0.3s",
+    transition: ".3s",
+    fontSize: isMobile ? "13px" : "15px",
   },
 };

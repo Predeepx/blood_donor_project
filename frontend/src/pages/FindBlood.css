@@ -1,6 +1,6 @@
 .finder-container {
   height: calc(100vh - 70px);
-  margin-top: 70px;
+  margin-top: clamp(70px, 12vw, 95px);
   position: relative;
 }
 

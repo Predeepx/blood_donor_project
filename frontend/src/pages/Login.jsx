@@ -55,12 +55,22 @@ export default function Login() {
   return (
     <div style={styles.page(isMobile)}>
       <div style={styles.card(isMobile)}>
-        <h1 style={styles.title(isMobile)}>🩸 QuickDonor</h1>
+        <h1
+          style={{
+            fontSize: window.innerWidth <= 768 ? "30px" : "36px",
+            marginBottom: "10px",
+          }}
+        >
+          🩸 QuickDonor
+        </h1>
 
-        <p style={styles.subtitle(isMobile)}>
-          {isSignup
-            ? "Create your QuickDonor account"
-            : "Login to your account"}
+        <p
+          style={{
+            marginBottom: "20px",
+            color: "#666",
+          }}
+        >
+          {isSignup ? "Create Account" : "Login to your account"}
         </p>
 
         {isSignup && (
@@ -105,70 +115,47 @@ export default function Login() {
     </div>
   );
 }
-
 const styles = {
-  page: (mobile) => ({
+  page: {
     minHeight: "100vh",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     background: "#eef2f7",
-    padding: mobile ? "20px" : "0",
+    padding: window.innerWidth <= 768 ? "20px" : "0",
     boxSizing: "border-box",
-  }),
+  },
 
-  card: (mobile) => ({
-    width: mobile ? "100%" : "350px",
-    maxWidth: "420px",
-    background: "#fff",
-    padding: mobile ? "28px 22px" : "40px",
-    borderRadius: "18px",
+  card: {
+    background: "white",
+    padding: "40px",
+    borderRadius: "16px",
+    width: window.innerWidth <= 768 ? "100%" : "350px",
+    maxWidth: "350px",
     boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
     textAlign: "center",
     boxSizing: "border-box",
-  }),
+  },
 
-  title: (mobile) => ({
-    fontSize: mobile ? "30px" : "36px",
-    marginBottom: "10px",
-    color: "#c62828",
-  }),
-
-  subtitle: (mobile) => ({
-    color: "#666",
-    marginBottom: "25px",
-    fontSize: mobile ? "15px" : "16px",
-  }),
-
-  input: (mobile) => ({
+  input: {
     width: "100%",
-    padding: mobile ? "14px" : "12px",
+    padding: "12px",
     marginBottom: "15px",
-    borderRadius: "10px",
+    borderRadius: "8px",
     border: "1px solid #ddd",
-    fontSize: "16px",
-    outline: "none",
     boxSizing: "border-box",
-  }),
+    fontSize: window.innerWidth <= 768 ? "16px" : "15px",
+  },
 
-  btn: (mobile) => ({
+  btn: {
     width: "100%",
-    padding: mobile ? "14px" : "12px",
+    padding: "12px",
     background: "#111",
-    color: "#fff",
+    color: "white",
     border: "none",
     borderRadius: "10px",
     cursor: "pointer",
+    fontSize: window.innerWidth <= 768 ? "16px" : "15px",
     fontWeight: "600",
-    fontSize: mobile ? "16px" : "15px",
-    transition: "0.3s",
-  }),
-
-  switchText: (mobile) => ({
-    marginTop: "20px",
-    color: "#c62828",
-    cursor: "pointer",
-    fontWeight: "500",
-    fontSize: mobile ? "15px" : "14px",
-  }),
+  },
 };

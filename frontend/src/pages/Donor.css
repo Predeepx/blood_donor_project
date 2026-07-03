@@ -157,10 +157,6 @@
   }
 }
 
-
-
-
-
 .map-search {
   display: flex;
   gap: 10px;
@@ -195,11 +191,10 @@
    MOBILE RESPONSIVE (DOES NOT AFFECT DESKTOP)
 ========================================== */
 @media (max-width: 768px) {
-
   .donor-container {
     flex-direction: column;
     height: auto;
-    margin-top: 70px;
+    margin-top: clamp(70px, 12vw, 95px);
   }
 
   /* Form becomes full width */
@@ -282,7 +277,6 @@
    EXTRA SMALL PHONES
 ========================================== */
 @media (max-width: 480px) {
-
   .donor-form {
     padding: 16px;
   }
