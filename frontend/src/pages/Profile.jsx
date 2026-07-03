@@ -19,7 +19,7 @@ export default function Profile() {
       const token = localStorage.getItem("token");
       if (!token) return navigate("/login");
 
-      const res = await axios.get("http://localhost:5001/api/auth/profile", {
+      axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -37,9 +37,13 @@ export default function Profile() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.put("http://localhost:5001/api/auth/profile", form, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/auth/profile`,
+        form,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
 
       setEditing(false);
       fetchProfile();
