@@ -1,4 +1,3 @@
-
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -79,5 +78,55 @@ export const login = async (req, res) => {
   } catch (error) {
     console.error("Login Error:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+/* ===============================
+   GET PROFILE
+================================= */
+export const getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.json(user);
+  } catch (error) {
+    console.error("Profile Error:", error);
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+};
+
+/* ===============================
+   UPDATE PROFILE
+================================= */
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, phone, city, bloodGroup } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        name,
+        phone,
+        city,
+        bloodGroup,
+      },
+      {
+        new: true,
+      },
+    ).select("-password");
+
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server error",
+    });
   }
 };

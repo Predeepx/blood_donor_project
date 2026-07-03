@@ -17,11 +17,22 @@ export default function Profile() {
   const fetchProfile = async () => {
     try {
       const token = localStorage.getItem("token");
-      if (!token) return navigate("/login");
 
-      axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/auth/profile`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      console.log("Profile Response:", res.data);
 
       setUser(res.data);
       setForm(res.data);
@@ -34,7 +45,8 @@ export default function Profile() {
       }
 
       alert("Profile request failed");
-      // Comment these out for now
+
+      // Uncomment these after debugging
       // localStorage.removeItem("token");
       // navigate("/login");
     } finally {
@@ -50,13 +62,16 @@ export default function Profile() {
         `${import.meta.env.VITE_API_URL}/api/auth/profile`,
         form,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
       );
 
       setEditing(false);
       fetchProfile();
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Failed to update profile");
     }
   };

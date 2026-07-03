@@ -1,5 +1,10 @@
 import express from "express";
-import { register, login } from "../controllers/authController.js";
+import {
+  register,
+  login,
+  getProfile,
+  updateProfile,
+} from "../controllers/authController.js";
 import protect from "../middleware/authMiddleware.js";
 import User from "../models/User.js";
 
@@ -14,6 +19,9 @@ router.post("/register", register);
    LOGIN
 =========================== */
 router.post("/login", login);
+
+router.get("/profile", protect, getProfile);
+router.put("/profile", protect, updateProfile);
 
 /* ===========================
    PROFILE (Protected)
