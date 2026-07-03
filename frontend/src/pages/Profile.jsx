@@ -4,11 +4,13 @@ import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 
 export default function Profile() {
+  const navigate = useNavigate();
+
   const [user, setUser] = useState(null);
+  const [form, setForm] = useState({});
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
-  const [form, setForm] = useState({});
-  const navigate = useNavigate();
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -32,23 +34,11 @@ export default function Profile() {
         },
       );
 
-      console.log("Profile Response:", res.data);
-
       setUser(res.data);
       setForm(res.data);
     } catch (err) {
-      console.error("Profile Error:", err);
-
-      if (err.response) {
-        console.log("Status:", err.response.status);
-        console.log("Data:", err.response.data);
-      }
-
-      alert("Profile request failed");
-
-      // Uncomment these after debugging
-      // localStorage.removeItem("token");
-      // navigate("/login");
+      console.error(err);
+      alert("Unable to load profile.");
     } finally {
       setLoading(false);
     }
@@ -56,6 +46,8 @@ export default function Profile() {
 
   const saveProfile = async () => {
     try {
+      setSaving(true);
+
       const token = localStorage.getItem("token");
 
       await axios.put(
@@ -73,6 +65,8 @@ export default function Profile() {
     } catch (err) {
       console.error(err);
       alert("Failed to update profile");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -81,99 +75,166 @@ export default function Profile() {
     navigate("/login");
   };
 
-  if (loading) return <div style={{ marginTop: 150 }}>Loading...</div>;
+  if (loading)
+    return (
+      <>
+        <Navbar />
+        <div style={styles.loading}>
+          <div style={styles.spinner}></div>
+          <h2>Loading Profile...</h2>
+        </div>
+      </>
+    );
+
   if (!user) return null;
 
   return (
     <>
       <Navbar />
 
-      <div style={styles.container}>
+      <div style={styles.page}>
         <div style={styles.card}>
+          {/* HEADER */}
+
           <div style={styles.header}>
             <div style={styles.avatar}>
               {user.name?.charAt(0).toUpperCase()}
             </div>
 
-            <div>
-              <h2>{user.name}</h2>
-              <p style={{ color: "#666" }}>{user.email}</p>
-            </div>
+            <h1 style={styles.name}>{user.name}</h1>
+
+            <p style={styles.email}>{user.email}</p>
+
+            <span style={styles.badge}>
+              🩸 {user.bloodGroup || "Blood Group Not Set"}
+            </span>
           </div>
 
+          {/* PERSONAL INFO */}
+
           <div style={styles.section}>
-            <Row label="Blood Group" value={user.bloodGroup || "Not set"} />
-            <Row label="Phone" value={user.phone || "Not set"} />
-            <Row label="City" value={user.city || "Not set"} />
-            <Row
+            <h3 style={styles.sectionTitle}>Personal Information</h3>
+
+            <InfoRow label="Full Name" value={user.name || "-"} />
+
+            <InfoRow label="Email" value={user.email} />
+
+            <InfoRow label="Phone" value={user.phone || "Not Available"} />
+
+            <InfoRow label="City" value={user.city || "Not Available"} />
+
+            <InfoRow label="Blood Group" value={user.bloodGroup || "-"} />
+
+            <InfoRow
               label="Member Since"
               value={
                 user.createdAt
                   ? new Date(user.createdAt).toLocaleDateString()
-                  : "N/A"
+                  : "-"
               }
             />
           </div>
 
-          <div style={styles.stats}>
-            <Stat
-              title="Total Donations"
+          {/* STATS */}
+
+          <div style={styles.statsContainer}>
+            <StatCard
+              title="Blood Donations"
               value={user.donationHistory?.length || 0}
             />
-            <Stat
-              title="Lives Impacted"
+
+            <StatCard
+              title="Lives Helped"
               value={(user.donationHistory?.length || 0) * 3}
             />
           </div>
 
-          <div style={styles.buttons}>
-            <button onClick={() => setEditing(true)} style={styles.editBtn}>
-              Edit Profile
+          {/* BUTTONS */}
+
+          <div style={styles.buttonRow}>
+            <button style={styles.editBtn} onClick={() => setEditing(true)}>
+              ✏ Edit Profile
             </button>
 
-            <button onClick={logout} style={styles.logoutBtn}>
+            <button style={styles.logoutBtn} onClick={logout}>
               Logout
             </button>
           </div>
         </div>
       </div>
 
+      {/* EDIT MODAL */}
+
       {editing && (
-        <div style={styles.modalOverlay}>
+        <div style={styles.overlay}>
           <div style={styles.modal}>
-            <h3>Edit Profile</h3>
-
+            <h2>Edit Profile</h2>
             <input
+              style={styles.input}
+              placeholder="Full Name"
               value={form.name || ""}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              placeholder="Name"
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  name: e.target.value,
+                })
+              }
             />
-
             <input
-              value={form.phone || ""}
-              onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              style={styles.input}
               placeholder="Phone"
+              value={form.phone || ""}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  phone: e.target.value,
+                })
+              }
             />
-
             <input
-              value={form.city || ""}
-              onChange={(e) => setForm({ ...form, city: e.target.value })}
+              style={styles.input}
               placeholder="City"
+              value={form.city || ""}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  city: e.target.value,
+                })
+              }
             />
-
-            <input
+            <select
+              style={styles.input}
               value={form.bloodGroup || ""}
-              onChange={(e) => setForm({ ...form, bloodGroup: e.target.value })}
-              placeholder="Blood Group"
-            />
-
-            <div style={{ marginTop: 20 }}>
-              <button onClick={saveProfile} style={styles.saveBtn}>
-                Save
-              </button>
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  bloodGroup: e.target.value,
+                })
+              }
+            >
+              <option value="">Select Blood Group</option>
+              <option>A+</option>
+              <option>A-</option>
+              <option>B+</option>
+              <option>B-</option>
+              <option>O+</option>
+              <option>O-</option>
+              <option>AB+</option>
+              <option>AB-</option>
+            </select>
+            {/* Part 2 continues here */}{" "}
+            <div style={styles.modalButtons}>
               <button
-                onClick={() => setEditing(false)}
+                style={styles.saveBtn}
+                onClick={saveProfile}
+                disabled={saving}
+              >
+                {saving ? "Saving..." : "Save Changes"}
+              </button>
+
+              <button
                 style={styles.cancelBtn}
+                onClick={() => setEditing(false)}
               >
                 Cancel
               </button>
@@ -185,123 +246,238 @@ export default function Profile() {
   );
 }
 
-function Row({ label, value }) {
+function InfoRow({ label, value }) {
   return (
-    <div style={styles.row}>
-      <strong>{label}</strong>
-      <span>{value}</span>
+    <div style={styles.infoRow}>
+      <span style={styles.label}>{label}</span>
+      <span style={styles.value}>{value}</span>
     </div>
   );
 }
 
-function Stat({ title, value }) {
+function StatCard({ title, value }) {
   return (
     <div style={styles.statCard}>
-      <h2>{value}</h2>
-      <p>{title}</p>
+      <h1 style={styles.statNumber}>{value}</h1>
+      <p style={styles.statTitle}>{title}</p>
     </div>
   );
 }
 
+const isMobile = window.innerWidth < 768;
+
 const styles = {
-  container: {
-    marginTop: 120,
+  page: {
+    minHeight: "100vh",
+    background: "#f4f6fb",
+    padding: isMobile ? "90px 15px" : "120px 30px",
     display: "flex",
     justifyContent: "center",
+    alignItems: "flex-start",
   },
-  card: {
-    width: 450,
-    padding: 40,
-    background: "#fff",
-    borderRadius: 20,
-    boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
-  },
-  header: {
+
+  loading: {
+    height: "100vh",
     display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
     alignItems: "center",
     gap: 20,
   },
-  avatar: {
-    width: 70,
-    height: 70,
+
+  spinner: {
+    width: 60,
+    height: 60,
+    border: "6px solid #ddd",
+    borderTop: "6px solid #d32f2f",
     borderRadius: "50%",
-    background: "#c62828",
+    animation: "spin 1s linear infinite",
+  },
+
+  card: {
+    width: "100%",
+    maxWidth: 750,
+    background: "#fff",
+    borderRadius: 20,
+    overflow: "hidden",
+    boxShadow: "0 15px 40px rgba(0,0,0,.08)",
+  },
+
+  header: {
+    background: "linear-gradient(135deg,#c62828,#ff5a5a)",
     color: "#fff",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  section: {
-    marginTop: 25,
-  },
-  row: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginBottom: 10,
-  },
-  stats: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginTop: 25,
-  },
-  statCard: {
-    background: "#f5f5f5",
-    padding: 15,
-    borderRadius: 10,
-    width: "45%",
+    padding: isMobile ? 30 : 45,
     textAlign: "center",
   },
-  buttons: {
-    marginTop: 30,
-    display: "flex",
-    justifyContent: "space-between",
-  },
-  editBtn: {
-    background: "#111",
-    color: "#fff",
-    padding: "10px 20px",
-    border: "none",
-    borderRadius: 8,
-  },
-  logoutBtn: {
-    background: "#c62828",
-    color: "#fff",
-    padding: "10px 20px",
-    border: "none",
-    borderRadius: 8,
-  },
-  modalOverlay: {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(0,0,0,0.4)",
+
+  avatar: {
+    width: isMobile ? 85 : 110,
+    height: isMobile ? 85 : 110,
+    borderRadius: "50%",
+    background: "#fff",
+    color: "#c62828",
+    fontWeight: "bold",
+    fontSize: isMobile ? 34 : 45,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    margin: "auto",
   },
-  modal: {
-    background: "#fff",
-    padding: 30,
-    borderRadius: 15,
-    width: 350,
+
+  name: {
+    marginTop: 20,
+    marginBottom: 5,
+    fontSize: isMobile ? 28 : 36,
+  },
+
+  email: {
+    opacity: 0.9,
+    marginBottom: 20,
+    wordBreak: "break-word",
+  },
+
+  badge: {
+    background: "rgba(255,255,255,.2)",
+    padding: "10px 18px",
+    borderRadius: 30,
+    fontWeight: "bold",
+  },
+
+  section: {
+    padding: isMobile ? 20 : 35,
+  },
+
+  sectionTitle: {
+    marginBottom: 20,
+    fontSize: 22,
+    color: "#333",
+  },
+
+  infoRow: {
     display: "flex",
-    flexDirection: "column",
-    gap: 10,
+    justifyContent: "space-between",
+    alignItems: isMobile ? "flex-start" : "center",
+    flexDirection: isMobile ? "column" : "row",
+    padding: "16px 0",
+    borderBottom: "1px solid #eee",
+    gap: 5,
   },
-  saveBtn: {
+
+  label: {
+    color: "#555",
+    fontWeight: 600,
+  },
+
+  value: {
+    color: "#777",
+    textAlign: isMobile ? "left" : "right",
+  },
+
+  statsContainer: {
+    display: "grid",
+    gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+    gap: 20,
+    padding: "0 35px 35px",
+  },
+
+  statCard: {
+    background: "#fafafa",
+    borderRadius: 15,
+    padding: 25,
+    textAlign: "center",
+  },
+
+  statNumber: {
+    color: "#c62828",
+    margin: 0,
+    fontSize: 40,
+  },
+
+  statTitle: {
+    color: "#666",
+    marginTop: 10,
+  },
+
+  buttonRow: {
+    display: "flex",
+    flexDirection: isMobile ? "column" : "row",
+    gap: 15,
+    padding: "0 35px 35px",
+  },
+
+  editBtn: {
+    flex: 1,
+    background: "#111",
+    color: "#fff",
+    border: "none",
+    padding: 15,
+    borderRadius: 10,
+    cursor: "pointer",
+    fontSize: 16,
+  },
+
+  logoutBtn: {
+    flex: 1,
     background: "#c62828",
     color: "#fff",
-    padding: "8px 15px",
     border: "none",
-    borderRadius: 6,
-    marginRight: 10,
+    padding: 15,
+    borderRadius: 10,
+    cursor: "pointer",
+    fontSize: 16,
   },
-  cancelBtn: {
-    background: "#aaa",
+
+  overlay: {
+    position: "fixed",
+    inset: 0,
+    background: "rgba(0,0,0,.45)",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    zIndex: 999,
+  },
+
+  modal: {
+    width: "100%",
+    maxWidth: 420,
+    background: "#fff",
+    borderRadius: 20,
+    padding: 30,
+    display: "flex",
+    flexDirection: "column",
+    gap: 15,
+  },
+
+  input: {
+    padding: 14,
+    border: "1px solid #ddd",
+    borderRadius: 10,
+    fontSize: 15,
+  },
+
+  modalButtons: {
+    display: "flex",
+    gap: 10,
+    flexDirection: isMobile ? "column" : "row",
+  },
+
+  saveBtn: {
+    flex: 1,
+    background: "#c62828",
     color: "#fff",
-    padding: "8px 15px",
     border: "none",
-    borderRadius: 6,
+    padding: 14,
+    borderRadius: 10,
+    cursor: "pointer",
+  },
+
+  cancelBtn: {
+    flex: 1,
+    background: "#ddd",
+    border: "none",
+    padding: 14,
+    borderRadius: 10,
+    cursor: "pointer",
   },
 };
