@@ -191,3 +191,158 @@
   font-weight: 600;
   cursor: pointer;
 }
+/* ==================================================
+   MOBILE RESPONSIVE (ONLY MOBILE)
+================================================== */
+@media (max-width: 768px) {
+
+  .finder-container {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    margin-top: 70px;
+  }
+
+  /* Floating panel becomes a normal card */
+  .finder-panel {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: calc(100% - 30px);
+    margin: 15px auto;
+    padding: 18px;
+    border-radius: 14px;
+    box-sizing: border-box;
+  }
+
+  .finder-panel h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 18px;
+  }
+
+  /* Search */
+  .map-search {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .map-search input,
+  .map-search button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .finder-panel select {
+    width: 100%;
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    margin-top: 10px;
+  }
+
+  .checkbox input {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Map */
+  .map {
+    width: 100%;
+    height: 420px;
+  }
+
+  /* Popup */
+  .popup-card {
+    min-width: 180px;
+    gap: 10px;
+  }
+
+  .full-btn {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    font-size: 15px;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    padding: 15px;
+  }
+
+  .modal {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 22px;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cancel,
+  .send {
+    width: 100%;
+  }
+}
+
+
+/* ==================================================
+   EXTRA SMALL PHONES
+================================================== */
+@media (max-width: 480px) {
+
+  .finder-panel {
+    width: calc(100% - 20px);
+    margin: 10px;
+    padding: 15px;
+  }
+
+  .finder-panel h2 {
+    font-size: 21px;
+  }
+
+  .map-search input,
+  .map-search button {
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  .finder-panel select {
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  .checkbox {
+    font-size: 14px;
+  }
+
+  .map {
+    height: 350px;
+  }
+
+  .popup-card h4 {
+    font-size: 16px;
+  }
+
+  .popup-card p {
+    font-size: 14px;
+  }
+
+  .full-btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .modal {
+    padding: 18px;
+  }
+}

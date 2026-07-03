@@ -190,3 +190,140 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+/* ==========================================
+   MOBILE RESPONSIVE (DOES NOT AFFECT DESKTOP)
+========================================== */
+@media (max-width: 768px) {
+
+  .donor-container {
+    flex-direction: column;
+    height: auto;
+    margin-top: 70px;
+  }
+
+  /* Form becomes full width */
+  .donor-form {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    box-shadow: none;
+  }
+
+  .donor-form h2 {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .donor-form input,
+  .donor-form select,
+  .donor-form button {
+    width: 100%;
+    font-size: 16px;
+  }
+
+  /* Map takes full width */
+  .donor-map {
+    width: 100%;
+    margin-top: 15px;
+  }
+
+  .map {
+    height: 420px;
+    width: 100%;
+  }
+
+  /* Search bar stacks */
+  .map-search {
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+  }
+
+  .map-search input,
+  .map-search button {
+    width: 100%;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    padding: 15px;
+  }
+
+  .modal-card {
+    width: 100%;
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 14px;
+  }
+
+  .modal-body {
+    padding: 18px;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .cancel-btn,
+  .confirm-btn {
+    width: 100%;
+  }
+
+  .checkbox-row {
+    align-items: flex-start;
+    font-size: 13px;
+  }
+}
+
+/* ==========================================
+   EXTRA SMALL PHONES
+========================================== */
+@media (max-width: 480px) {
+
+  .donor-form {
+    padding: 16px;
+  }
+
+  .donor-form h2 {
+    font-size: 21px;
+  }
+
+  .donor-form input,
+  .donor-form select {
+    padding: 12px;
+    font-size: 15px;
+  }
+
+  .donor-form button {
+    padding: 13px;
+    font-size: 15px;
+  }
+
+  .map {
+    height: 350px;
+  }
+
+  .map-search {
+    padding: 10px;
+  }
+
+  .map-search input {
+    font-size: 15px;
+  }
+
+  .map-search button {
+    font-size: 15px;
+  }
+
+  .modal-header {
+    font-size: 16px;
+    padding: 15px;
+  }
+
+  .modal-body {
+    padding: 15px;
+  }
+}
