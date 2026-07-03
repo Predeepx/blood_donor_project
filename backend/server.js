@@ -22,7 +22,7 @@ const server = http.createServer(app);
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
-  "https://your-app.vercel.app",
+  "https://blood-donor-project-six.vercel.app",
 ];
 
 const io = new Server(server, {
