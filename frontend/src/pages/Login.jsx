@@ -39,7 +39,7 @@ export default function Login() {
       const data = await res.json();
 
       if (!res.ok) {
-        alert(`Error ${res.status}: ${data.message}`);
+        alert(data.message || "Authentication failed");
         return;
       }
 
@@ -53,23 +53,35 @@ export default function Login() {
   };
 
   return (
-    <div style={styles.page(isMobile)}>
-      <div style={styles.card(isMobile)}>
+    <div
+      style={{
+        ...styles.page,
+        ...(isMobile && {
+          padding: "20px",
+        }),
+      }}
+    >
+      <div
+        style={{
+          ...styles.card,
+          ...(isMobile && {
+            width: "100%",
+            maxWidth: "360px",
+            padding: "30px 22px",
+          }),
+        }}
+      >
         <h1
           style={{
-            fontSize: window.innerWidth <= 768 ? "30px" : "36px",
+            fontSize: isMobile ? "30px" : "36px",
             marginBottom: "10px",
+            color: "#c62828",
           }}
         >
           🩸 QuickDonor
         </h1>
 
-        <p
-          style={{
-            marginBottom: "20px",
-            color: "#666",
-          }}
-        >
+        <p style={styles.subtitle}>
           {isSignup ? "Create Account" : "Login to your account"}
         </p>
 
@@ -79,7 +91,7 @@ export default function Login() {
             placeholder="Full Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            style={styles.input(isMobile)}
+            style={styles.input}
           />
         )}
 
@@ -88,7 +100,7 @@ export default function Login() {
           placeholder="Email Address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={styles.input(isMobile)}
+          style={styles.input}
         />
 
         <input
@@ -96,17 +108,19 @@ export default function Login() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={styles.input(isMobile)}
+          style={styles.input}
         />
 
-        <button onClick={handleSubmit} style={styles.btn(isMobile)}>
+        <button
+          onClick={handleSubmit}
+          style={styles.btn}
+          onMouseOver={(e) => (e.target.style.background = "#c62828")}
+          onMouseOut={(e) => (e.target.style.background = "#111")}
+        >
           {isSignup ? "Create Account" : "Login"}
         </button>
 
-        <p
-          style={styles.switchText(isMobile)}
-          onClick={() => setIsSignup(!isSignup)}
-        >
+        <p style={styles.switchText} onClick={() => setIsSignup(!isSignup)}>
           {isSignup
             ? "Already have an account? Login"
             : "Don't have an account? Sign Up"}
@@ -115,6 +129,7 @@ export default function Login() {
     </div>
   );
 }
+
 const styles = {
   page: {
     minHeight: "100vh",
@@ -122,19 +137,23 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     background: "#eef2f7",
-    padding: window.innerWidth <= 768 ? "20px" : "0",
     boxSizing: "border-box",
   },
 
   card: {
-    background: "white",
+    background: "#fff",
     padding: "40px",
     borderRadius: "16px",
-    width: window.innerWidth <= 768 ? "100%" : "350px",
-    maxWidth: "350px",
+    width: "350px",
     boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
     textAlign: "center",
     boxSizing: "border-box",
+  },
+
+  subtitle: {
+    marginBottom: "20px",
+    color: "#666",
+    fontSize: "15px",
   },
 
   input: {
@@ -144,18 +163,28 @@ const styles = {
     borderRadius: "8px",
     border: "1px solid #ddd",
     boxSizing: "border-box",
-    fontSize: window.innerWidth <= 768 ? "16px" : "15px",
+    fontSize: "15px",
+    outline: "none",
   },
 
   btn: {
     width: "100%",
     padding: "12px",
     background: "#111",
-    color: "white",
+    color: "#fff",
     border: "none",
     borderRadius: "10px",
     cursor: "pointer",
-    fontSize: window.innerWidth <= 768 ? "16px" : "15px",
+    fontSize: "15px",
     fontWeight: "600",
+    transition: "0.3s",
+  },
+
+  switchText: {
+    marginTop: "18px",
+    color: "#c62828",
+    cursor: "pointer",
+    fontWeight: "600",
+    fontSize: "14px",
   },
 };
