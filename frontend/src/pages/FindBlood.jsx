@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import {
@@ -11,6 +10,7 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import "./FindBlood.css";
+const API = import.meta.env.VITE_API_URL;
 
 /* Fix Leaflet icon */
 delete L.Icon.Default.prototype._getIconUrl;
@@ -49,7 +49,7 @@ export default function FindBlood() {
   }, [bloodGroup, nearbyOnly, userPosition]);
 
   const fetchDonors = async () => {
-    const res = await fetch("http://localhost:5001/api/donors/search", {
+    const res = await fetch(`${API}/api/donors/search`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -70,7 +70,7 @@ export default function FindBlood() {
 
     try {
       const res = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}`,
       );
       const data = await res.json();
 
@@ -143,7 +143,7 @@ export default function FindBlood() {
         donor.bloodGroup
       }\nLocation: https://www.google.com/maps?q=${
         userPosition?.[0]
-      },${userPosition?.[1]}\n\nPlease respond if available.\n\nQuickDonor`
+      },${userPosition?.[1]}\n\nPlease respond if available.\n\nQuickDonor`,
     );
     return `https://wa.me/${phone}?text=${message}`;
   };
@@ -205,7 +205,7 @@ export default function FindBlood() {
                 userPosition[0],
                 userPosition[1],
                 donor.location.coordinates[1],
-                donor.location.coordinates[0]
+                donor.location.coordinates[0],
               );
 
             return (

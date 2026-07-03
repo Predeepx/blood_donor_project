@@ -9,6 +9,7 @@ import {
 } from "react-leaflet";
 import L from "leaflet";
 import "./Donor.css";
+const API = import.meta.env.VITE_API_URL;
 
 /* Fix Leaflet icon */
 delete L.Icon.Default.prototype._getIconUrl;
@@ -84,7 +85,7 @@ export default function Donor() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5001/api/donors/register", {
+      const res = await fetch(`${API}/api/donors/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

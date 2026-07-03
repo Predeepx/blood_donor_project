@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+const API = import.meta.env.VITE_API_URL;
 
 export default function Login() {
   const [isSignup, setIsSignup] = useState(false);
@@ -14,8 +15,8 @@ export default function Login() {
     }
 
     const endpoint = isSignup
-      ? "http://localhost:5001/api/auth/register"
-      : "http://localhost:5001/api/auth/login";
+      ? `${API}/api/auth/register`
+      : `${API}/api/auth/login`;
 
     try {
       const res = await fetch(endpoint, {
@@ -29,7 +30,6 @@ export default function Login() {
           password,
         }),
       });
-      
 
       const data = await res.json();
 
