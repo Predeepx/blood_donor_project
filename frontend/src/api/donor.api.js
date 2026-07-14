@@ -1,7 +1,7 @@
-import api from "./axios";
+import API from "./axios";
 
-export const createDonor = (data) => api.post("/donors", data);
+export const createDonor = (data) => API.post("/donors", data);
 
-export const getDonors = () => api.get("/donors");
+export const getDonors = () => API.get("/donors");
 
-export const searchDonors = (data) => api.post("/donors/search", data);
+export const searchDonors = (data) => API.post("/donors/search", data);

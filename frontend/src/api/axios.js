@@ -2,7 +2,8 @@ import axios from "axios";
 
 const API = axios.create({
   baseURL:
-    import.meta.env.VITE_API_URL || "https://quick-donor-project.onrender.com",
+    import.meta.env.VITE_API_URL ||
+    "https://quick-donor-project.onrender.com/api",
 
   headers: {
     "Content-Type": "application/json",
@@ -11,7 +12,6 @@ const API = axios.create({
   withCredentials: true,
 });
 
-// Attach JWT token automatically
 API.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
