@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://quick-donor-project.onrender.com/api",
+  baseURL:
+    import.meta.env.VITE_API_URL || "https://quick-donor-project.onrender.com",
+
   headers: {
     "Content-Type": "application/json",
   },
