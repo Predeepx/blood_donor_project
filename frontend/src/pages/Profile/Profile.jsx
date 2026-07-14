@@ -26,7 +26,7 @@ export default function Profile() {
       }
 
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/auth/profile`,
+        `${import.meta.env.VITE_API_URL}/auth/profile`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -50,15 +50,11 @@ export default function Profile() {
 
       const token = localStorage.getItem("token");
 
-      await axios.put(
-        `${import.meta.env.VITE_API_URL}/api/auth/profile`,
-        form,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      await axios.put(`${import.meta.env.VITE_API_URL}/auth/profile`, form, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       setEditing(false);
       fetchProfile();
