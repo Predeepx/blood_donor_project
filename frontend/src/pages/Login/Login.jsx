@@ -18,7 +18,9 @@ export default function Login() {
       return;
     }
 
-    const endpoint = isSignup ? `${API}/api/auth/register` : `${API}/api/auth/login`;
+    const endpoint = isSignup
+      ? `${API_URL}/api/auth/register`
+      : `${API_URL}/api/auth/login`;
 
     console.log("Request URL:", endpoint);
 
