@@ -12,32 +12,24 @@ import authRoutes from "./routes/auth.routes.js";
 import donorRoutes from "./routes/donor.routes.js";
 import requestRoutes from "./routes/request.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
-import errorMiddleware from "./middleware/error.middleware.js";
 import notificationRoutes from "./routes/notification.routes.js";
+
+import errorMiddleware from "./middleware/error.middleware.js";
 import { initializeSocket } from "./sockets/socket.handlers.js";
 
-const io = new Server(server, {
-  cors: {
-    origin: allowedOrigins,
-    methods: ["GET", "POST"],
-  },
-});
-
-initializeSocket(io);
-
-app.use("/api/notifications", notificationRoutes);
-
-app.use(errorMiddleware);
-
-console.log(process.env.MONGO_URI);
-
+/* ===============================
+   DATABASE
+================================= */
 connectDB();
 
+/* ===============================
+   EXPRESS APP
+================================= */
 const app = express();
 const server = http.createServer(app);
 
 /* ===============================
-   SOCKET.IO
+   CORS ORIGINS
 ================================= */
 const allowedOrigins = [
   "http://localhost:5173",
@@ -45,12 +37,18 @@ const allowedOrigins = [
   "https://blood-donor-project-six.vercel.app",
 ];
 
+/* ===============================
+   SOCKET.IO
+================================= */
 const io = new Server(server, {
   cors: {
     origin: allowedOrigins,
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
+
+initializeSocket(io);
 
 app.set("io", io);
 
@@ -73,11 +71,28 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/donors", donorRoutes);
 app.use("/api/request", requestRoutes);
-app.use("/api/dashboard", dashboardRoutes); // ✅ moved here
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/notifications", notificationRoutes);
 
+/* ===============================
+   HEALTH CHECK
+================================= */
 app.get("/", (req, res) => {
-  res.send("🚀 QuickDonor API is running...");
+  res.json({
+    message: "QuickDonor API is running 🚀",
+  });
 });
+
+app.post("/test", (req, res) => {
+  res.json({
+    message: "POST works",
+  });
+});
+
+/* ===============================
+   ERROR HANDLER
+================================= */
+app.use(errorMiddleware);
 
 /* ===============================
    START SERVER
@@ -86,9 +101,4 @@ const PORT = process.env.PORT || 5001;
 
 server.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-});
-app.post("/test", (req, res) => {
-  res.json({
-    message: "POST works",
-  });
 });
