@@ -1,13 +1,13 @@
 import API from "./axios";
 
 export const createDonor = (data) => {
-  return API.post("/donors", data);
+  return API.post("/api/donors", data);
 };
 
 export const getDonors = () => {
-  return API.get("/donors");
+  return API.get("/api/donors");
 };
 
 export const searchDonors = (data) => {
-  return API.post("/donors/search", data);
+  return API.post("/api/donors/search", data);
 };
