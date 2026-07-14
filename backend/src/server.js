@@ -12,6 +12,22 @@ import authRoutes from "./routes/auth.routes.js";
 import donorRoutes from "./routes/donor.routes.js";
 import requestRoutes from "./routes/request.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
+import errorMiddleware from "./middleware/error.middleware.js";
+import notificationRoutes from "./routes/notification.routes.js";
+import { initializeSocket } from "./sockets/socket.handlers.js";
+
+const io = new Server(server, {
+  cors: {
+    origin: allowedOrigins,
+    methods: ["GET", "POST"],
+  },
+});
+
+initializeSocket(io);
+
+app.use("/api/notifications", notificationRoutes);
+
+app.use(errorMiddleware);
 
 console.log(process.env.MONGO_URI);
 

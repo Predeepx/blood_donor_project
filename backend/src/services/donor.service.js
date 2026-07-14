@@ -13,12 +13,11 @@ export const getAllDonors = async () => {
   return await Donor.find().populate("user", "name email profileImage");
 };
 
-
 export const getNearbyDonors = async (
   latitude,
   longitude,
   bloodGroup,
-  radius = 500000000000,
+  radius = 100000,
 ) => {
   return await Donor.find({
     bloodGroup,
