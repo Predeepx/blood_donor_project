@@ -1,10 +1,28 @@
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+const API = axios.create({
+  baseURL:
+    import.meta.env.VITE_API_URL || "https://quick-donor-project.onrender.com",
+
   headers: {
     "Content-Type": "application/json",
   },
+
+  withCredentials: true,
 });
 
-export default api;
+// Attach JWT token automatically
+API.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
+
+export default API;
